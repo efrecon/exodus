@@ -36,7 +36,7 @@ The steps to create such minimal images are as follows:
 
 The following exemplifies these steps on [jq](https://stedolan.github.io/jq/).
 
-````
+```Dockerfile
 FROM efrecon/exodus
 
 # Install whatever needed from debian
@@ -56,13 +56,13 @@ COPY --from=0 /root /
 
 # You now have a minimal image!
 ENTRYPOINT ["/bin/jq"]
-````
+```
 
 Build this image using a command similar to:
 
-````
+```Shell
 docker build -t efrecon/jq .
-````
+```
 
 On my system, the resulting image is 3.18MB, nothing more, nothing less...
 
@@ -72,7 +72,7 @@ On my system, the resulting image is 3.18MB, nothing more, nothing less...
 
 By comparison, a similar image based on the following Dockerfile is 80.3MB.
 
-````
+```Dockerfile
 FROM debian:jessie-slim
 
 RUN apt-get update && \
@@ -80,7 +80,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["jq"]
-````
+```
 
 #### Alpine
 
@@ -91,13 +91,13 @@ relocate the binaries, but these will still depend of `libc`.
 
   [musl]: https://www.musl-libc.org/
 
-````
+```Dockerfile
 FROM alpine
 
 RUN apk --no-cache add jq
 
 ENTRYPOINT ["jq"]
-````
+```
 
 ## Acknowledgements
 
