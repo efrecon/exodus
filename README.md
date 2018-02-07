@@ -6,7 +6,9 @@ Docker images, but on top of the whole Debian catalog!  Building uses [exodus]
 to create self-contained binaries with their entire library dependencies and
 Docker [multi-stage] builds to squash away the original Debian context and
 installation. This results in images that contain the bare minimal to run the
-binary at hand.
+binary at hand. For example, packaging the `jq` binary takes 3.18MB instead of
+80.3MB (on top of Debian Jessie) or 5.32MB (on top of Alpine, but this isn't a
+fair comparison).
 
   [exodus]: https://github.com/intoli/exodus
   [multi-stage]: https://docs.docker.com/develop/develop-images/multistage-build/
@@ -66,6 +68,8 @@ On my system, the resulting image is 3.18MB, nothing more, nothing less...
 
 ### Size Matters
 
+#### Debian
+
 By comparison, a similar image based on the following Dockerfile is 80.3MB.
 
 ````
@@ -77,3 +81,25 @@ RUN apt-get update && \
 
 ENTRYPOINT ["jq"]
 ````
+
+#### Alpine
+
+Building on top of Alpine with the following Dockerfile leads to a 5.32MB image
+instead.  However, Alpine is built on top of the [musl] library and has a
+smaller set of software packages available. [exodus] uses [musl] to properly
+relocate the binaries, but these will still depend of `libc`.
+
+  [musl]: https://www.musl-libc.org/
+
+````
+FROM alpine
+
+RUN apk --no-cache add jq
+
+ENTRYPOINT ["jq"]
+````
+
+## Acknowledgements
+
+Nothing would be possible without [exodus] and its ability to relocate binaries
+and their library dependencies.
